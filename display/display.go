@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/Eldius/display-metrics-go/config"
 	"github.com/Eldius/display-metrics-go/metrics"
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
@@ -18,6 +19,12 @@ const (
 func Display() {
 	for {
 		_, err := metrics.GetSummary()
+		if err != nil {
+			if err.Error() == config.EndpointEmptyError {
+				log.Println("Endpoint configuration is empty")
+				panic(err.Error())
+			}
+		}
 		if err == nil {
 			break
 		}
@@ -28,6 +35,7 @@ func Display() {
 		log.Fatalf("failed to initialize termui: %v", err)
 	}
 	defer ui.Close()
+	ui.Clear()
 
 	go fetchMetrics()
 	metrics.GetSummary()
@@ -40,7 +48,7 @@ func Display() {
 }
 
 func fetchMetrics() {
-	d, _ := time.ParseDuration(fetchTimeInterval)
+	d := config.GetMetricsRefreshInterval()
 	for {
 		m, _ := metrics.GetSummary()
 		printSummary(m)

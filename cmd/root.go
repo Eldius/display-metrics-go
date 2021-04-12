@@ -18,6 +18,8 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
+
 	"github.com/spf13/cobra"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -73,9 +75,13 @@ func initConfig() {
 
 		// Search config in home directory with name ".display-metrics-go" (without extension).
 		viper.AddConfigPath(home)
-		viper.SetConfigName(".display-metrics-go")
+		viper.AddConfigPath(".")
+		viper.SetConfigName("display-metrics-go")
+		viper.SetConfigType("yaml")
 	}
 
+	viper.SetEnvPrefix("display")
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.

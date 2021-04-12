@@ -2,8 +2,11 @@ package metrics
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/Eldius/display-metrics-go/config"
 )
 
 type SummaryResponse struct {
@@ -21,8 +24,14 @@ type SummaryData struct {
 }
 
 func GetSummary() (*SummaryResponse, error) {
+	endpoint, err := config.GetMetricsEndpoint()
+	//log.Printf("Endpoint: '%s'\n", endpoint)
+	if endpoint == "" {
+		log.Printf(err.Error())
+		return nil, fmt.Errorf("Endpoint not configured")
+	}
 	c := http.DefaultClient
-	res, err := c.Get("http://192.168.100.195/dashboard/summary")
+	res, err := c.Get(endpoint)
 	if err != nil {
 		log.Println("Failed to fetch metrics data")
 		return nil, err
