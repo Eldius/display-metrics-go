@@ -1,0 +1,11 @@
+{
+    "status": "success",
+    "error": "",
+    "data": {
+      "nodes": 1,
+      "cpu": 15.186111111110623,
+      "memory": 18.487708790576985,
+      "pods": 17,
+      "containers": 42
+    }
+  }
